@@ -1,0 +1,655 @@
+:root {
+  /* Light-only brand, by design — a browser's forced/auto dark mode would otherwise
+     repaint this cream-and-ink palette into something muddy and unintended. */
+  color-scheme: light;
+  --paper: #f6f0e3;
+  --paper-deep: #eee3cd;
+  --card: #fbf7ee;
+  --ink: #2a2318;
+  --ink-soft: #6b6151;
+  --ink-faint: #9b9179;
+  --rule: rgba(42, 35, 24, 0.16);
+  --oxblood: #9e3c29;
+  --oxblood-soft: rgba(158, 60, 41, 0.1);
+  --gold: #a3822f;
+  --shadow: 0 1px 2px rgba(30, 20, 10, 0.04), 0 16px 40px rgba(30, 20, 10, 0.08);
+
+  --display: "Fraunces", Georgia, serif;
+  --body: "Source Serif 4", Georgia, serif;
+  --stamp: "Special Elite", "Courier New", monospace;
+}
+
+* { box-sizing: border-box; }
+
+/* A class rule setting `display` (e.g. `.book-wrap{display:flex}`) beats the `[hidden]`
+   attribute's UA-stylesheet `display:none` on specificity — several elements here are
+   toggled via the `hidden` attribute AND have their own `display` in a class rule, which
+   silently un-hides them (confirmed via devtools: #book-wrap was rendering all 17 pages,
+   full height, underneath the envelope gate the whole time). Force it to actually win. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--oxblood); }
+
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- shared type/marks ---------- */
+
+.eyebrow {
+  font-family: var(--stamp);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+}
+
+.serif-h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(34px, 6vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 10px 0 0;
+}
+
+.serif-h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 0 0 6px;
+}
+
+.lede {
+  font-family: var(--body);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.rule {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 40px 0;
+}
+
+.rule.dotted { border-top: 1px dashed var(--rule); }
+
+hr.postmark {
+  position: relative;
+  border: none;
+  height: 1px;
+  background: var(--rule);
+  margin: 56px 0;
+}
+hr.postmark::after {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--paper);
+  color: var(--gold);
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+/* ---------- nav / footer (shared chrome) ---------- */
+
+.site-header {
+  padding: 22px 0 0;
+}
+.site-header .wrap {
+  max-width: 720px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.site-header .wordmark {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--ink);
+}
+.site-header .wordmark em { font-weight: 500; font-style: italic; color: var(--oxblood); }
+.site-header nav a {
+  font-family: var(--stamp);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink-soft);
+  margin-left: 18px;
+}
+
+.site-footer {
+  margin-top: 100px;
+  padding: 40px 0 60px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+.site-footer .wrap { max-width: 720px; }
+.site-footer p { font-family: var(--stamp); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+
+/* ---------- waitlist form ---------- */
+
+.waitlist {
+  display: flex;
+  gap: 8px;
+  max-width: 420px;
+  margin: 22px 0;
+}
+.waitlist input[type=email] {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-family: var(--body);
+  font-size: 16px;
+  padding: 13px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--card);
+  color: var(--ink);
+}
+.waitlist input[type=email]:focus { outline: 2px solid var(--oxblood-soft); border-color: var(--oxblood); }
+.waitlist button {
+  font: inherit;
+  font-family: var(--stamp);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 3px;
+  background: var(--oxblood);
+  color: #fbf3e8;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+.waitlist button:active { transform: scale(0.97); }
+.waitlist button:disabled { opacity: 0.6; cursor: default; }
+.waitlist-note { font-size: 14px; color: var(--ink-soft); margin-top: -8px; }
+.waitlist-result { font-size: 14px; color: var(--oxblood); font-weight: 600; }
+
+/* ================= LANDING ================= */
+
+.hero {
+  padding: 60px 0 10px;
+  text-align: center;
+}
+.hero .wrap { max-width: 720px; }
+.hero .lede { max-width: 480px; margin: 18px auto 30px; }
+.hero .waitlist { margin-left: auto; margin-right: auto; }
+
+.envelope-teaser {
+  margin: 46px auto 0;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  padding: 34px 30px;
+  position: relative;
+}
+.envelope-teaser::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+.envelope-stamp {
+  width: 70px;
+  height: 84px;
+  margin: 0 0 18px auto;
+  border: 1.5px dashed var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--stamp);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--gold);
+  padding: 6px;
+}
+.envelope-teaser .to-line { font-family: var(--stamp); font-size: 12px; letter-spacing: 0.05em; color: var(--ink-soft); text-transform: uppercase; }
+.envelope-teaser .issue-name { font-family: var(--display); font-size: 24px; font-weight: 600; margin: 6px 0 4px; }
+.envelope-teaser .issue-sub { font-size: 15px; color: var(--ink-soft); }
+.envelope-teaser a.btn {
+  display: inline-block;
+  margin-top: 18px;
+  font-family: var(--stamp);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--oxblood);
+  border-bottom: 1px solid var(--oxblood);
+  padding-bottom: 2px;
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 30px 0;
+}
+.pillar {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 16px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pillar .glyph svg { width: 32px; height: 32px; display: block; }
+.pillar h3 { font-family: var(--display); font-size: 13.5px; line-height: 1.2; margin: 8px 0 4px; }
+.pillar p { font-size: 11.5px; line-height: 1.35; color: var(--ink-soft); margin: 0; }
+@media (max-width: 380px) {
+  .pillars { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .pillar { padding: 12px 6px; }
+  .pillar .glyph svg { width: 26px; height: 26px; }
+  .pillar h3 { font-size: 12px; }
+  .pillar p { font-size: 10.5px; }
+}
+
+.philosophy p { margin: 0 0 18px; }
+.philosophy p.tight { margin-bottom: 4px; }
+
+/* ================= ISSUE READER ================= */
+
+.issue-cover {
+  padding: 70px 0 40px;
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+}
+.issue-cover .issue-no { font-family: var(--stamp); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.issue-cover .serif-h1 { margin-top: 14px; }
+.issue-cover .route {
+  font-family: var(--stamp);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  max-width: 460px;
+  margin: 22px auto 0;
+  line-height: 1.9;
+}
+.issue-cover .duration {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--oxblood);
+  margin-top: 26px;
+}
+
+.section { padding: 60px 0; }
+.section.tight { padding: 30px 0; }
+
+.dear-reader {
+  text-align: center;
+  padding: 70px 0;
+}
+.dear-reader .portrait-frame { margin: 0 auto 34px; }
+.dear-reader p.salutation { font-family: var(--display); font-style: italic; font-size: 20px; color: var(--ink-soft); margin-bottom: 6px; }
+.dear-reader p.stamp-line {
+  font-family: var(--stamp);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  margin: 22px 0;
+}
+.dear-reader .intro { text-align: left; max-width: 480px; margin: 0 auto; }
+
+.portrait-frame {
+  width: min(300px, 70vw);
+  aspect-ratio: 3/4;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+.portrait-frame .placeholder-label {
+  font-family: var(--stamp);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+  text-align: center;
+}
+
+.chapter-mark {
+  font-family: var(--stamp);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  margin-bottom: 8px;
+}
+.chapter-title { font-family: var(--display); font-weight: 600; font-size: 30px; margin: 0 0 24px; }
+.chapter-title .quote-mark { color: var(--gold); }
+
+.story p { margin: 0 0 20px; }
+.story p.short { margin-bottom: 4px; }
+.story p.beat { font-family: var(--display); font-style: italic; font-size: 20px; color: var(--ink-soft); margin: 0 0 4px; }
+
+.pull { font-family: var(--display); font-style: italic; font-size: 24px; color: var(--oxblood); text-align: center; margin: 40px auto; max-width: 480px; line-height: 1.4; }
+
+/* -- map -- */
+.map-section { text-align: center; }
+.route-line { list-style: none; padding: 0; margin: 30px auto; max-width: 320px; text-align: left; position: relative; }
+.route-line::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: var(--rule); }
+.route-line li { position: relative; padding: 0 0 22px 26px; font-family: var(--stamp); font-size: 14px; letter-spacing: 0.03em; }
+.route-line li::before { content: ""; position: absolute; left: 0; top: 4px; width: 11px; height: 11px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--oxblood); }
+.route-line li.origin::before, .route-line li.terminus::before { background: var(--oxblood); }
+.route-line li .date { color: var(--ink-soft); font-size: 12px; display: block; margin-top: 2px; }
+
+.stat-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin: 20px 0; }
+.stat-strip .stat { text-align: center; }
+.stat-strip .stat .num { font-family: var(--display); font-weight: 600; font-size: 22px; display: block; }
+.stat-strip .stat .label { font-family: var(--stamp); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+
+/* -- archival / evidence -- */
+.evidence-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px; margin-top: 26px; }
+.evidence-card { background: var(--card); border: 1px solid var(--rule); border-radius: 3px; padding: 16px; box-shadow: var(--shadow); }
+.evidence-frame {
+  aspect-ratio: 4/5;
+  background: var(--card);
+  border: 1px dashed var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.evidence-frame .placeholder-label { font-family: var(--stamp); font-size: 10.5px; line-height: 1.6; color: var(--ink-faint); }
+.evidence-caption { font-size: 13.5px; color: var(--ink-soft); margin: 0; }
+.evidence-caption b { color: var(--ink); }
+
+.source-note {
+  border-left: 3px solid var(--gold);
+  padding: 4px 0 4px 16px;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  margin-top: 26px;
+}
+
+/* -- world around them -- */
+.context-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin: 26px 0; }
+.context-card .glyph { font-family: var(--stamp); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--oxblood); }
+.context-card p { margin: 6px 0 0; font-size: 15.5px; }
+
+
+/* -- postcard -- */
+.postcard {
+  max-width: 460px;
+  margin: 30px auto 0;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+}
+.postcard-art {
+  background: var(--card);
+  border-right: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 200px;
+}
+.postcard-art .placeholder-label { font-family: var(--stamp); font-size: 10.5px; text-align: center; color: var(--ink-faint); line-height: 1.6; }
+.postcard-art:has(.postcard-illustration) { padding: 0; }
+.postcard-illustration { width: 100%; height: 100%; min-height: 200px; display: block; }
+
+.tea-illustration { width: 150px; height: auto; margin: 0 auto 18px; display: block; }
+.cover-flourish { width: 180px; height: auto; margin: 26px auto 0; display: block; }
+.postcard-text { padding: 20px 18px; display: flex; flex-direction: column; justify-content: space-between; }
+.postcard-text .eyebrow { margin-bottom: 8px; }
+.postcard-text p { font-size: 14.5px; margin: 0 0 10px; }
+.postcard-text .send-line { font-family: var(--stamp); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--oxblood); margin-top: auto; }
+@media (max-width: 480px) { .postcard { grid-template-columns: 1fr; } .postcard-art { border-right: none; border-bottom: 1px solid var(--rule); } }
+
+/* -- bibliography -- */
+.paper-trail h4 { font-family: var(--stamp); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin: 20px 0 8px; }
+.paper-trail ul { margin: 0; padding-left: 18px; font-size: 14.5px; color: var(--ink-soft); }
+.paper-trail li { margin-bottom: 4px; }
+
+.close-note { text-align: center; padding: 20px 0 10px; }
+.close-note .serif-h2 { margin-bottom: 10px; }
+
+.placeholder-tag {
+  display: inline-block;
+  font-family: var(--stamp);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 100px;
+  padding: 2px 9px;
+  margin-bottom: 8px;
+}
+
+.evidence-frame img, .portrait-frame img { width: 100%; height: 100%; object-fit: cover; }
+.photo-credit { font-family: var(--stamp); font-size: 10px; letter-spacing: 0.04em; color: var(--ink-faint); margin: 6px 0 0; }
+
+/* ================= LEAFLET READER ================= */
+
+/* The interactive book itself (page-flip.js), sized to roughly a folded pamphlet leaf.
+   "stretch" mode + min/max lets it scale down gracefully on narrow phones, where the
+   library automatically switches to single-page ("portrait") mode instead of a spread. */
+.book-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  display: flex;
+  /* stretch (not center) so #book actually fills the height set on this wrapper —
+     the library reads its own container's real offsetHeight to decide how tall a page
+     can be; center would leave #book auto-height (self-referential via its internal
+     aspect-ratio padding trick), so the library's own height clamp never sees the real
+     budget and the book could render taller than the viewport. */
+  align-items: stretch;
+  justify-content: center;
+  overflow: hidden;
+}
+#book { margin: 0 auto; }
+
+/* The page-flip library sets `display: block` as an INLINE style on every .book-page
+   (needed for its own absolute-position layout) — that silently beats any `display: flex`
+   in a stylesheet, so flex-centering .book-page itself never actually worked. Centering
+   has to happen on an inner wrapper the library never touches instead. */
+.book-page {
+  background: var(--paper-deep);
+  color: var(--ink);
+  padding: 26px 24px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.52;
+}
+.page-inner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Scale the same content classes used elsewhere down to fit a page this narrow — every
+   page is sized to need zero internal scrolling (touch-scroll fights the library's own
+   flip-drag gesture), so this errs tight rather than loose. */
+.book-page .serif-h1 { font-size: 25px; line-height: 1.1; }
+.book-page .serif-h2 { font-size: 20px; margin-bottom: 12px; }
+.book-page .chapter-title { font-size: 20px; margin-bottom: 14px; }
+.book-page .duration { font-size: 15px; margin-top: 14px; }
+.book-page .lede { font-size: 15.5px; }
+.book-page .pull { font-size: 16px; margin: 20px auto; }
+.book-page .stamp-line { font-size: 12px; margin: 8px 0; }
+.book-page .route { font-size: 9.5px; line-height: 1.6; }
+.book-page.story p.beat { font-size: 13px; }
+.book-page .eyebrow { font-size: 11px; }
+.book-page .portrait-frame { width: min(136px, 64%); }
+.book-page .tea-illustration { width: 90px; margin-bottom: 10px; }
+.book-page .cover-flourish { width: min(230px, 90%); margin-top: 20px; }
+.book-page .evidence-grid, .book-page .context-grid { gap: 8px; margin-top: 8px; }
+.book-page .context-card p { font-size: 12px; }
+.book-page .evidence-card { padding: 8px; }
+.book-page .evidence-frame { padding: 5px; margin-bottom: 6px; }
+.book-page .evidence-caption { font-size: 11px; }
+.book-page .photo-credit { font-size: 8.5px; }
+/* Evidence photos were sitting narrow and centered, mostly empty page either side —
+   image-left/text-right uses the full page width instead. */
+.book-page .evidence-card-row { display: flex; align-items: center; gap: 14px; text-align: left; }
+.book-page .evidence-card-row .evidence-frame { flex: 0 0 42%; margin-bottom: 0; }
+.book-page .evidence-card-row .evidence-text { flex: 1; min-width: 0; }
+.book-page .evidence-card-row .evidence-caption,
+.book-page .evidence-card-row .photo-credit { text-align: left; }
+.book-page .postcard { max-width: 100%; }
+.book-page .postcard-art { min-height: 130px; }
+.book-page .postcard-illustration { min-height: 130px; }
+.book-page .source-note { font-size: 11px; margin-top: 10px; padding: 3px 0 3px 12px; }
+.book-page .stat-strip { gap: 6px 14px; margin-top: 6px; }
+.book-page .stat-strip .num { font-size: 13px; }
+.book-page .stat-strip .label { font-size: 9px; }
+/* The map page's route list was the worst offender — 11 stops at full desktop spacing
+   (22px padding + 14px type per row) ran to ~500px alone, more than an entire page's
+   budget. Compressed hard: smaller dots, tighter rows, smaller type. */
+.book-page .route-line { margin: 6px auto; max-width: 100%; }
+.book-page .route-line li { padding: 0 0 3px 14px; font-size: 8.5px; }
+.book-page .route-line li::before { width: 5px; height: 5px; top: 2px; }
+.book-page .route-line li .date { font-size: 7.5px; margin-top: 0; }
+.book-page p { margin: 0 0 10px; }
+.book-page .intro { text-align: left; }
+.book-page .issue-cover, .book-page.dear-reader { border-bottom: none; }
+
+/* A blank-feeling final leaf, like the inside of a real back cover. */
+.book-page.back-cover { text-align: center; }
+.book-page.back-cover .wordmark-echo { font-family: var(--display); font-weight: 700; font-size: 19px; }
+.book-page.back-cover .wordmark-echo em { font-style: italic; font-weight: 500; color: var(--oxblood); }
+
+.leaflet-nav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+  background: rgba(251, 247, 238, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--rule);
+}
+.leaflet-nav button {
+  font-family: var(--display);
+  font-size: 22px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  color: var(--oxblood);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+.leaflet-nav button:active { transform: scale(0.92); }
+.leaflet-nav button:disabled { opacity: 0.3; cursor: default; }
+.leaflet-nav .page-counter { font-family: var(--stamp); font-size: 11px; letter-spacing: 0.08em; color: var(--ink-soft); min-width: 128px; text-align: center; }
+
+/* -- envelope gate: two stages, "closed envelope" then "unpacked, tap leaflet to open" -- */
+.envelope-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.envelope-gate.opening { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.envelope-gate .envelope-teaser { cursor: pointer; margin: 0; }
+.tap-hint { text-align: center; font-family: var(--stamp); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin-top: 16px; }
+
+.unpack-stage { text-align: center; }
+.unpack-stage[hidden] { display: none; }
+
+.unpack-items { display: flex; justify-content: center; gap: 10px 12px; margin-bottom: 26px; flex-wrap: wrap; max-width: 300px; }
+.unpack-item {
+  width: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: unpack-in 0.5s ease forwards;
+  animation-delay: calc(var(--d, 0) * 0.12s);
+}
+.unpack-item svg { width: 52px; height: 52px; }
+.unpack-item span { font-family: var(--stamp); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); line-height: 1.3; }
+@keyframes unpack-in { to { opacity: 1; transform: translateY(0); } }
+
+.book-cover {
+  width: 240px;
+  aspect-ratio: 5/7;
+  margin: 0 auto;
+  background: var(--paper-deep);
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: var(--shadow-float);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  position: relative;
+  opacity: 0;
+  transform: scale(0.94);
+  animation: unpack-in 0.5s ease forwards;
+  animation-delay: 0.55s;
+}
+.book-cover::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--rule);
+}
+.book-cover-inner { text-align: center; }
+.book-cover .issue-no { font-size: 10px; }
+.book-cover-title { font-family: var(--display); font-weight: 600; font-size: 18px; line-height: 1.12; margin: 10px 0; }
+.book-cover:active { transform: scale(0.97); }
