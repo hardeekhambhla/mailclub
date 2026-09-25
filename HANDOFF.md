@@ -1,5 +1,12 @@
 # Handoff
 
+**Cloudflare deploy (2026-09-25)**: site is deployable to Cloudflare Pages; Flask stays for local dev only.
+- `build.py` renders `templates/` to `public/` (`/`, `/issues/001` as `issues/001.html`, `/static/*`). `public/` is gitignored.
+- `functions/waitlist.js` = Pages Function for `POST /waitlist`; stores `email:<lowercased>` -> ISO timestamp in KV binding `WAITLIST` (dedupes).
+- Pages settings: build cmd `pip install -r requirements.txt && python3 build.py`, output dir `public`, prod branch `main`. KV binding `WAITLIST` is set in the dashboard (Settings > Bindings) - deliberately no `wrangler.toml`, since one would override dashboard bindings.
+- Local test: `make cf-dev` (wrangler pages dev, local KV). Read signups: `npx wrangler kv key list --namespace-id <id>`.
+- Adding a page: add the route to `ROUTES`/`PAGES` in `build.py` as well as `app.py`.
+
 **Second overflow/navigation/polish pass (fixed 2026-09-17, same day, later session)** —
 this time actually verified with a real browser (see "Browser testing" below), not by hand
 calculation, after two rounds of blind guessing failed:
@@ -57,10 +64,12 @@ done by hand (word counts → estimated wrapped lines → estimated px) since th
 working browser in this environment to verify actual text wrapping — flagged as the one thing
 really worth checking first.
 
-**Status (2026-09-17)**: first-pass prototype, running live at http://localhost:5757 (plain
-background process, not yet installed as a systemd service — `make install` needs an
-interactive sudo password this environment doesn't have, and it's premature anyway while
-the design is still a draft). Nothing committed to git yet (no git repo initialized in this
+**Ops (2026-09-20)**: app died once because it was only a plain background process. Keeping
+it up = install as systemd service (`make install`, needs user's sudo password); then
+`~/watchdog` (5-min timer) auto-restarts any enabled-but-down unit in /etc/systemd/system.
+Before `make install`, kill any manual process on :5757 or the service can't bind.
+
+**Status (2026-09-17)**: first-pass prototype, running live at http://localhost:5757. Nothing committed to git yet (no git repo initialized in this
 dir at all).
 
 **What exists**:

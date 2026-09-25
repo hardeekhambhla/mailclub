@@ -42,3 +42,10 @@ status:
 
 logs:
 	journalctl -u $(SERVICE) -f
+
+.PHONY: build cf-dev
+build: .venv/.installed
+	$(VENV)/python build.py
+
+cf-dev: build
+	npx wrangler pages dev public --kv WAITLIST
