@@ -168,7 +168,7 @@ form.addEventListener("submit", async (e) => {
     });
     const data = await res.json();
     if (data.ok) {
-      note.textContent = "You're on the list. First envelope goes out the day we launch.";
+      note.textContent = "Thank you for your interest. We'll mail you when our first edition is ready.";
       note.className = "waitlist-result";
       form.reset();
     } else {
